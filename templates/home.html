@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>API analysis page</title>
+</head>
+
+<body>
+    <div><button id="analyze" type="button" onclick="callFunction()">APIs Guru</button></div>
+    <div class="grid-container">
+        <div class="grid-item-1">
+            <div class="sub-grid-item-1">
+                <div class="display-box-wrapper">
+                    <div class="label">Total number of APIs:</div>
+                    <div class="display-box" id="num_apis">0</div>
+                </div>
+                <div class="display-box-wrapper">
+                    <div class="label">Total number of Specifications:</div>
+                    <div class="display-box" id="num_specs">0</div>
+                </div>
+                <div class="display-box-wrapper">
+                    <div class="label">Total number of EndPoints:</div>
+                    <div class="display-box" id="num_endpoints">0</div>
+                </div>
+                <div class="display-box-wrapper">
+                    <div class="label">Total number of API-versions:</div>
+                    <div class="display-box" id="num_api_versions">0</div>
+                </div>
+                <div class="display-box-wrapper">
+                    <div class="label">Total number of EndPoint-versions:</div>
+                    <div class="display-box" id="num_endpoint_versions">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-item-2">
+            <div class="sub-grid-item-2">
+                <img src="/static/images/logo.webp" alt="logo" style="width: 400px; height: 400px">
+            </div>
+        </div>
+        <div class="grid-item-2">
+            <div class="sub-grid-item-1">
+                <svg id="barchart" width="500" height="400"></svg>
+                <label>API versioning formats</label>
+            </div>
+        </div>
+        <div class="grid-item-2">
+            <div class="sub-grid-item-2">
+                <svg id="barchart2" width="500" height="400"></svg>
+                <label>API versioning methods</label>
+            </div>
+        </div>
+        <div class="grid-item-2">
+            <div class="sub-grid-item-1">
+                <svg id="barchart3" width="500" height="400"></svg>
+                <label>Endpoint versioning formats</label>
+            </div>
+        </div>
+        <div class="grid-item-2">
+            <div class="sub-grid-item-2">
+                <svg id="barchart4" width="500" height="400"></svg>
+                <label>Endpoint versioning methods</label>
+            </div>
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/get_data.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/barchart.js') }}"></script>
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/piechart.js') }}"></script> -->
+</body>
+
+</html>
