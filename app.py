@@ -11,7 +11,7 @@ from utilities.functions import execute
 #################### Web Server and Display ####################
 
 # Web-Page running
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public", static_url_path="")
 
 @app.route("/")
 def home():
