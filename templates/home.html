@@ -4,72 +4,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>API analysis page</title>
+    <title>API Analysis Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --border-subtle: rgba(148, 163, 184, 0.1);
+            --border-hover: rgba(148, 163, 184, 0.2);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .guru-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guru-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .guru-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .guru-btn:hover::before {
+            left: 100%;
+        }
+
+        .guru-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        /* 2x2 Grid — matching original layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 420px;
+            backdrop-filter: blur(10px);
+        }
+
+        .grid-item:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .grid-item img {
+            max-width: 350px;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item img:hover {
+            transform: scale(1.02);
+        }
+
+        .chart-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-top: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .chart-svg {
+            width: 100%;
+            max-width: 500px;
+            height: 360px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-item img {
+                max-width: 220px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div><button id="analyze" type="button" onclick="callFunction()">APIs Guru</button></div>
-    <div class="grid-container">
-        <div class="grid-item-1">
-            <div class="sub-grid-item-1">
-                <div class="display-box-wrapper">
-                    <div class="label">Total number of APIs:</div>
-                    <div class="display-box" id="num_apis">0</div>
-                </div>
-                <div class="display-box-wrapper">
-                    <div class="label">Total number of Specifications:</div>
-                    <div class="display-box" id="num_specs">0</div>
-                </div>
-                <div class="display-box-wrapper">
-                    <div class="label">Total number of EndPoints:</div>
-                    <div class="display-box" id="num_endpoints">0</div>
-                </div>
-                <div class="display-box-wrapper">
-                    <div class="label">Total number of API-versions:</div>
-                    <div class="display-box" id="num_api_versions">0</div>
-                </div>
-                <div class="display-box-wrapper">
-                    <div class="label">Total number of EndPoint-versions:</div>
-                    <div class="display-box" id="num_endpoint_versions">0</div>
-                </div>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">API Analysis Dashboard</h1>
+            <button id="analyze" type="button" class="guru-btn" onclick="callFunction()">
+                🚀 Get API Data
+            </button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total APIs</div>
+                <div class="stat-value" id="num_apis">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Specifications</div>
+                <div class="stat-value" id="num_specs">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Endpoints</div>
+                <div class="stat-value" id="num_endpoints">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">API Versions</div>
+                <div class="stat-value" id="num_api_versions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Endpoint Versions</div>
+                <div class="stat-value" id="num_endpoint_versions">0</div>
             </div>
         </div>
-        <div class="grid-item-2">
-            <div class="sub-grid-item-2">
-                <img src="/static/images/logo.webp" alt="logo" style="width: 400px; height: 400px">
+
+        <!-- 2×2 Grid — same structure as original -->
+        <div class="grid-container">
+            <!-- Row 1 -->
+            <!-- <div class="grid-item">
+                <img src="/static/images/logo.webp" alt="logo">
+            </div> -->
+            <div class="grid-item">
+                <svg id="barchart" class="chart-svg"></svg>
+                <div class="chart-label">API versioning formats</div>
             </div>
-        </div>
-        <div class="grid-item-2">
-            <div class="sub-grid-item-1">
-                <svg id="barchart" width="500" height="400"></svg>
-                <label>API versioning formats</label>
+            <!-- Row 2 -->
+            <div class="grid-item">
+                <svg id="barchart2" class="chart-svg"></svg>
+                <div class="chart-label">API versioning methods</div>
             </div>
-        </div>
-        <div class="grid-item-2">
-            <div class="sub-grid-item-2">
-                <svg id="barchart2" width="500" height="400"></svg>
-                <label>API versioning methods</label>
+            <div class="grid-item">
+                <svg id="barchart3" class="chart-svg"></svg>
+                <div class="chart-label">Endpoint versioning formats</div>
             </div>
-        </div>
-        <div class="grid-item-2">
-            <div class="sub-grid-item-1">
-                <svg id="barchart3" width="500" height="400"></svg>
-                <label>Endpoint versioning formats</label>
-            </div>
-        </div>
-        <div class="grid-item-2">
-            <div class="sub-grid-item-2">
-                <svg id="barchart4" width="500" height="400"></svg>
-                <label>Endpoint versioning methods</label>
+            <!-- Row 3 -->
+            <div class="grid-item">
+                <svg id="barchart4" class="chart-svg"></svg>
+                <div class="chart-label">Endpoint versioning methods</div>
             </div>
         </div>
     </div>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/get_data.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/barchart.js') }}"></script>
-    <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/piechart.js') }}"></script> -->
 </body>
 
 </html>
